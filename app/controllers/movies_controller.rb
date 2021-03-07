@@ -9,16 +9,17 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings    
-    @sort = params[:sort]
-    @ratings_to_show = params[:ratings]
     @title_style = "hilite bg-warning"
-    
+    @sort = params[:sort] or session[:sort]
+    @ratings_to_show = params[:ratings] or [:ratings]
+
+
     if @ratings_to_show.nil?
       @ratings_to_show = @all_ratings.map{ |rating| [rating, rating.upcase]}.to_h # https://www.rubyguides.com/2018/10/ruby-map-method/
-    else
-      @ratings_to_show = params[:ratings]
     end
-    
+
+    session[:sort] = @sort
+    session[:ratings] = @ratings_to_show
     
     @movies = Movie.order(@sort).with_ratings(@ratings_to_show.keys)
   end
